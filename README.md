@@ -57,8 +57,7 @@ project_root/
 ├─ README.md # (this file)
 └─ static/ # optional css/js assets
 
-yaml
-Copy code
+
 
 ---
 
@@ -71,10 +70,6 @@ Copy code
    venv\Scripts\activate      # Windows
 Install dependencies:
 
-
-bash
-Copy code
-=======
 Prediction worker thread: Runs ML inference
 
 Video generator: Handles camera + landmark drawing
