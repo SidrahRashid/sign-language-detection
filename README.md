@@ -1,9 +1,9 @@
-<<<<<<< HEAD
+
 # 🤟 Real-Time Sign Language Detection System
 > Flask • MediaPipe • LSTM — Real-time ASL recognition with an elegant UI and image upload
 =======
 **🤟 Real-Time Sign Language Detection System (Flask + MediaPipe + LSTM)**
->>>>>>> a8baf785b3145b7212fc4d6f8c10786412d63986
+
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)]()
 [![Flask](https://img.shields.io/badge/flask-2.0-lightgrey.svg)]()
@@ -12,12 +12,12 @@
 
 ---
 
-<<<<<<< HEAD
+
 ## ✨ Project Overview
 =======
 **🚀 Features**
 🎥 1. Real-Time Video Sign Detection
->>>>>>> a8baf785b3145b7212fc4d6f8c10786412d63986
+
 
 **Real-Time Sign Language Detection System** is an end-to-end project that recognizes a handful of American Sign Language gestures using MediaPipe hand landmarks and an LSTM model. The system supports both **real-time webcam detection** and **single-image upload**, with a polished Flask-based GUI and time-based activation.
 
@@ -71,7 +71,7 @@ Copy code
    venv\Scripts\activate      # Windows
 Install dependencies:
 
-<<<<<<< HEAD
+
 bash
 Copy code
 =======
@@ -129,20 +129,13 @@ please
 4️⃣ Real-time predictions displayed on top of video
 ▶️ Run the App
 Step 1: Install Dependencies
->>>>>>> a8baf785b3145b7212fc4d6f8c10786412d63986
 pip install -r requirements.txt
 Start the app:
 
-bash
 Copy code
 python app.py
 Open the UI:
 
-<<<<<<< HEAD
-cpp
-Copy code
-http://127.0.0.1:5000
-=======
 Step 3: Open in browser
 http://127.0.0.1:5000
->>>>>>> a8baf785b3145b7212fc4d6f8c10786412d63986
+
