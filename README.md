@@ -1,11 +1,11 @@
-🤟 Real-Time Sign Language Detection System (Flask + MediaPipe + LSTM)
+**🤟 Real-Time Sign Language Detection System (Flask + MediaPipe + LSTM)**
 
 A complete end-to-end Sign Language Recognition System built using MediaPipe, TensorFlow (LSTM), and a Flask web interface.
 It supports real-time webcam prediction, image upload prediction, and a smart time-based availability window.
 
 🔥 This project demonstrates skills in deep learning, computer vision, threading, real-time systems, backend development, and UI engineering. Perfect for ML/AI portfolios and resumes.
 
-🚀 Features
+**🚀 Features**
 🎥 1. Real-Time Video Sign Detection
 
 Uses your webcam feed
@@ -57,7 +57,7 @@ Stale frames detected
 
 Guarantees high accuracy
 
-🧠 Tech Stack
+**🧠 Tech Stack**
 Component	Technology
 Hand Tracking	MediaPipe Hands
 Sequence Model	LSTM (TensorFlow / Keras)
@@ -74,7 +74,7 @@ Threading	Python threading module
 │── README.md              # Project documentation
 │── requirements.txt
 
-📝 How It Works
+**📝 How It Works**
 1️⃣ MediaPipe extracts 21 hand landmark coordinates
 
 → Each frame gives (21 × 3) = 63 values.
