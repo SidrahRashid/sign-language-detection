@@ -1,6 +1,7 @@
-flask
-opencv-python-headless
-mediapipe
-tensorflow
-numpy
-gunicorn
+flask==2.2.5
+gunicorn==20.1.0
+numpy==1.23.5
+opencv-python-headless==4.7.0.72
+tensorflow==2.12.0
+mediapipe==0.10.3
+requests==2.31.0
