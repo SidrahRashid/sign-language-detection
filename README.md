@@ -132,14 +132,10 @@ Step 1: Install Dependencies
 pip install -r requirements.txt
 Start the app:
 
-bash
 Copy code
 python app.py
 Open the UI:
 
-Copy code
-http://127.0.0.1:5000
-=======
 Step 3: Open in browser
 http://127.0.0.1:5000
 
