@@ -137,11 +137,9 @@ Copy code
 python app.py
 Open the UI:
 
-
-cpp
 Copy code
 http://127.0.0.1:5000
 =======
 Step 3: Open in browser
 http://127.0.0.1:5000
->>>>>>> a8baf785b3145b7212fc4d6f8c10786412d63986
+
