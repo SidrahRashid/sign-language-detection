@@ -44,6 +44,24 @@ mp_hands = mp.solutions.hands
 hands = None
 mp_drawing = None
 
+# --- model download helper (place near top of file) ---
+import os
+MODEL_PATH = "dynamic_lstm_model.h5"
+if not os.path.exists(MODEL_PATH):
+    model_url = os.environ.get("MODEL_URL")
+    if model_url:
+        import requests
+        print("[MODEL] downloading model from MODEL_URL ...")
+        with requests.get(model_url, stream=True) as r:
+            r.raise_for_status()
+            with open(MODEL_PATH, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+        print("[MODEL] download complete")
+# --- continue with load_model(MODEL_PATH) as usual ---
+
+
 try:
     if os.path.exists(MODEL_PATH):
         MODEL = load_model(MODEL_PATH)
