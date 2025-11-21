@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sign Language Detector — Simple</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 820px; margin: 20px auto; padding: 0 12px; }
+    .video-wrap { position: relative; width: 640px; height: 480px; margin-bottom: 8px; }
+    video, canvas { position: absolute; left: 0; top: 0; border-radius:6px; }
+    video { width: 640px; height: 480px; background:#000; transform: none; }
+    canvas { width: 640px; height: 480px; pointer-events: none; }
+    #controls { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Sign Language Detector — Simple (form uploads)</h2>
+  <p>Server time (IST): <span id="servertime">{{ now }}</span></p>
+  <p>Status: {% if active %}<strong style="color:green">ACTIVE</strong>{% else %}<strong style="color:red">OFFLINE</strong>{% endif %}</p>
+
+  <div class="video-wrap">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <div id="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" disabled>Stop</button>
+    <span id="pred">Prediction: —</span>
+    <div style="margin-top:10px;">
+      <form id="uploadForm">
+        <input type="file" id="fileinput" accept="image/*">
+        <button type="submit">Upload image (single)</button>
+      </form>
+      <div id="uploadResult"></div>
+    </div>
+  </div>
+
+<script>
+const VIDEO_W = 640, VIDEO_H = 480;
+const SEND_W = 320, SEND_H = 240;
+const SEND_INTERVAL_MS = 200;
+
+const video = document.getElementById("video");
+const overlay = document.getElementById("overlay");
+overlay.width = VIDEO_W; overlay.height = VIDEO_H;
+const octx = overlay.getContext("2d");
+
+let stream = null;
+let sendCanvas = document.createElement("canvas");
+sendCanvas.width = SEND_W; sendCanvas.height = SEND_H;
+let sctx = sendCanvas.getContext("2d");
+let sendInterval = null;
+
+async function startCamera(){
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: VIDEO_W, height: VIDEO_H } });
+    video.srcObject = stream;
+    video.style.transform = "none";
+  } catch (e){
+    alert("Cannot access camera: " + e);
+  }
+}
+
+function stopCamera(){
+  if(stream){
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+}
+
+function drawToSendCanvas(){
+  sctx.clearRect(0,0,SEND_W,SEND_H);
+  sctx.drawImage(video, 0, 0, SEND_W, SEND_H);
+  return new Promise(resolve => sendCanvas.toBlob(b => resolve(b), "image/jpeg", 0.6));
+}
+
+function parseServerText(text){
+  // expected "LABEL,CONF\nx0:y0;x1:y1;..."\n
+  const lines = text.trim().split("\n");
+  const pred = lines[0] || "";
+  const lmline = (lines.length>1) ? lines[1].trim() : "";
+  const landmarks = [];
+  if(lmline){
+    const parts = lmline.split(";");
+    for(const p of parts){
+      const [xs, ys] = p.split(":");
+      if(xs && ys){
+        landmarks.push([parseFloat(xs), parseFloat(ys)]);
+      }
+    }
+  }
+  return { pred, landmarks };
+}
+
+function drawLandmarks(normPts){
+  // normPts: array of [x,y] in 0..1 relative to sent frame (same orientation as preview)
+  octx.clearRect(0,0,overlay.width, overlay.height);
+  if(!normPts || normPts.length === 0) return;
+  // scale to overlay
+  const pts = normPts.map(p => [p[0]*overlay.width, p[1]*overlay.height]);
+  // connections (MediaPipe-like)
+  const connections = [
+    [0,1],[1,2],[2,3],[3,4],
+    [5,6],[6,7],[7,8],
+    [9,10],[10,11],[11,12],
+    [13,14],[14,15],[15,16],
+    [17,18],[18,19],[19,20],
+    [0,5],[5,9],[9,13],[13,17],[0,17]
+  ];
+  octx.lineWidth = 2; octx.strokeStyle = "lime"; octx.fillStyle = "red";
+  for(const c of connections){
+    const a = pts[c[0]], b = pts[c[1]];
+    if(!a || !b) continue;
+    octx.beginPath(); octx.moveTo(a[0], a[1]); octx.lineTo(b[0], b[1]); octx.stroke();
+  }
+  for(const p of pts){
+    octx.beginPath(); octx.arc(p[0], p[1], 4, 0, Math.PI*2); octx.fill();
+  }
+}
+
+async function sendFrameToServer(){
+  if(!video || video.readyState < 2) return;
+  const blob = await drawToSendCanvas();
+  const fd = new FormData();
+  fd.append("frame", blob, "frame.jpg");
+  try {
+    const res = await fetch("/predict_frame", { method: "POST", body: fd });
+    const text = await res.text();
+    if(text.startsWith("ERROR") || text.startsWith("OFFLINE")){
+      document.getElementById("pred").innerText = text;
+      drawLandmarks([]); // clear
+    } else {
+      const { pred, landmarks } = parseServerText(text);
+      // pred is like "hello,0.9234"
+      const [label, conf] = pred.split(",");
+      document.getElementById("pred").innerText = label + (conf ? ` (${(parseFloat(conf)*100).toFixed(1)}%)` : "");
+      drawLandmarks(landmarks);
+    }
+  } catch (err){
+    document.getElementById("pred").innerText = "ERROR: network";
+    drawLandmarks([]);
+  }
+}
+
+function startSending(){
+  if(sendInterval) return;
+  sendInterval = setInterval(sendFrameToServer, SEND_INTERVAL_MS);
+}
+
+function stopSending(){
+  if(sendInterval){ clearInterval(sendInterval); sendInterval = null; }
+}
+
+document.getElementById("startBtn").addEventListener("click", async () => {
+  await startCamera();
+  startSending();
+  document.getElementById("startBtn").disabled = true;
+  document.getElementById("stopBtn").disabled = false;
+});
+
+document.getElementById("stopBtn").addEventListener("click", () => {
+  stopSending();
+  stopCamera();
+  document.getElementById("startBtn").disabled = false;
+  document.getElementById("stopBtn").disabled = true;
+});
+
+// single image upload still works - parse and draw landmarks if returned
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = document.getElementById("fileinput").files[0];
+  if(!f){ alert("Select a file"); return; }
+  const fd = new FormData(); fd.append("frame", f);
+  try {
+    const res = await fetch("/predict_image_upload", { method: "POST", body: fd });
+    const text = await res.text();
+    if(text.startsWith("ERROR") || text.startsWith("OFFLINE")){
+      document.getElementById("uploadResult").innerText = text;
+    } else {
+      const { pred, landmarks } = parseServerText(text);
+      const [label, conf] = pred.split(",");
+      document.getElementById("uploadResult").innerText = label + (conf ? ` (${(parseFloat(conf)*100).toFixed(1)}%)` : "");
+      drawLandmarks(landmarks);
+    }
+  } catch(err){
+    document.getElementById("uploadResult").innerText = "ERROR";
+  }
+});
+</script>
+
+</body>
+</html>
