@@ -1,102 +1,77 @@
-🤟 Real-Time Sign Language Detection System (Flask + MediaPipe + LSTM)
+# 🤟 Real-Time Sign Language Detection System
+> Flask • MediaPipe • LSTM — Real-time ASL recognition with an elegant UI and image upload
 
-A complete end-to-end Sign Language Recognition System built using MediaPipe, TensorFlow (LSTM), and a Flask web interface.
-It supports real-time webcam prediction, image upload prediction, and a smart time-based availability window.
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)]()
+[![Flask](https://img.shields.io/badge/flask-2.0-lightgrey.svg)]()
+[![TensorFlow](https://img.shields.io/badge/tensorflow-keras-orange.svg)]()
+[![Status](https://img.shields.io/badge/status-production-brightgreen.svg)]()
 
-🔥 This project demonstrates skills in deep learning, computer vision, threading, real-time systems, backend development, and UI engineering. Perfect for ML/AI portfolios and resumes.
+---
 
-🚀 Features
-🎥 1. Real-Time Video Sign Detection
+## ✨ Project Overview
 
-Uses your webcam feed
+**Real-Time Sign Language Detection System** is an end-to-end project that recognizes a handful of American Sign Language gestures using MediaPipe hand landmarks and an LSTM model. The system supports both **real-time webcam detection** and **single-image upload**, with a polished Flask-based GUI and time-based activation.
 
-Runs MediaPipe hand tracking
+Key features:
+- Live webcam feed with landmark overlays and smooth predictions.
+- Image upload for single-frame analysis.
+- Threaded architecture for non-blocking prediction and streaming.
+- Time-window control for availability (e.g., 6 PM – 10 PM).
+- Clean, modern UI with glassmorphism + soft design.
 
-Draws landmarks directly on the video
+---
 
-Applies LSTM prediction on extracted sequences
+## 🎯 What it Demonstrates
 
-Smooth & accurate predictions
+- Real-time computer vision (MediaPipe Hands)
+- Sequential deep learning (LSTM with Keras/TensorFlow)
+- Production-style engineering (Flask, threading, MJPEG streaming)
+- UX/UI for ML applications
+- Debugging and robustness (stale buffer handling, smoothing)
 
-Fully optimized to avoid lag
+---
 
-🖼️ 2. Image Upload Prediction
+## 🧭 Quick Links
 
-Upload a static image (jpg/png)
+- **Local Flask app code**: `/mnt/data/app.py`  
+  (open this file to review or tweak the backend quickly)
 
-MediaPipe extracts keypoints
+---
 
-LSTM performs inference on padded sequences
+## 📁 Repository Structure
 
-Instant result shown on UI
+project_root/
+├─ app.py # Flask web app + streaming + prediction
+├─ dynamic_lstm_model.h5 # Trained LSTM model (not tracked in Git)
+├─ mp_data/ # (excluded via .gitignore) your dataset images
+├─ requirements.txt # pip dependencies
+├─ README.md # (this file)
+└─ static/ # optional css/js assets
 
-⏰ 3. Time-Controlled System Availability
+yaml
+Copy code
 
-System only works within selected hours
-(Example: 6 PM – 10 PM)
+---
 
-Outside this window → “System Offline”
+## 🚀 Demo / Run Locally
 
-⚙️ 4. Threaded Architecture
+1. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # Linux / Mac
+   venv\Scripts\activate      # Windows
+Install dependencies:
 
-Prediction worker thread: Runs ML inference
-
-Video generator: Handles camera + landmark drawing
-
-No blocking, no lag
-
-🧼 5. Smart Input Buffering
-
-Automatically clears buffer when:
-
-No hand detected for long
-
-Hand landmarks vanish
-
-Stale frames detected
-
-Guarantees high accuracy
-
-🧠 Tech Stack
-Component	Technology
-Hand Tracking	MediaPipe Hands
-Sequence Model	LSTM (TensorFlow / Keras)
-Backend	Flask
-Frontend	Custom HTML Template
-Real-Time Video	MJPEG Streaming
-Threading	Python threading module
-📦 Project Structure
-📁 project_root/
-│── app.py                 # Flask app with threaded ML pipeline
-│── dynamic_lstm_model.h5  # Trained LSTM model
-│── mp_data/               # (Excluded from Git using .gitignore)
-│── static/                # Optional CSS/JS assets
-│── README.md              # Project documentation
-│── requirements.txt
-
-📝 How It Works
-1️⃣ MediaPipe extracts 21 hand landmark coordinates
-
-→ Each frame gives (21 × 3) = 63 values.
-
-2️⃣ Frames are collected into sequences
-
-→ Buffer size = 30 frames.
-
-3️⃣ LSTM Model predicts one of the actions:
-
-hello
-thanks
-i_love_you
-please
-
-4️⃣ Real-time predictions displayed on top of video
-▶️ Run the App
-Step 1: Install Dependencies
+bash
+Copy code
 pip install -r requirements.txt
+Start the app:
 
-Step 2: Start the Flask App
+bash
+Copy code
 python app.py
+Open the UI:
 
-Step 3: Open in browser
+cpp
+Copy code
 http://127.0.0.1:5000
