@@ -1,10 +1,10 @@
 
 # 🤟 Real-Time Sign Language Detection System
 > Flask • MediaPipe • LSTM — Real-time ASL recognition with an elegant UI and image upload
-=======
+
 **🤟 Real-Time Sign Language Detection System (Flask + MediaPipe + LSTM)**
 
-
+![MIT License](https://img.shields.io/badge/License-MIT-green.svg)
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)]()
 [![Flask](https://img.shields.io/badge/flask-2.0-lightgrey.svg)]()
 [![TensorFlow](https://img.shields.io/badge/tensorflow-keras-orange.svg)]()
